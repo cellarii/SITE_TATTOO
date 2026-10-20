@@ -19,28 +19,55 @@ class Group(models.Model):
     def __str__(self) -> str:
         return self.name
 
-"""
+        
 class Service(models.Model):
-    title = models.TextField("Услуга")
-    description = models.TextField("Описание")
-    duration = models.TextField("Длительность")
-    price = models.DecimalField("Цена")
-    image = models.TextField("Изображение")
+    name = models.TextField("Название")
+    price = models.IntegerField("Стоимость")
+    duration = models.PositiveBigIntegerField("Длительность (мин)")
 
-class Appointment(models.Model):
-    data = models.DateField("Дата записи")
-    time = models.TimeField("Время записи")
-    client = models.ForeignKey()
-    master = models.ForeignKey()
-    comment = models.TextField("Комментарий")
+    class Meta:
+        verbose_name = "Услуга"
+        verbose_name_plural = "Услуги"
 
 class Portfolio(models.Model):
-    master = models.ForeignKey()
-    client = models.ForeignKey()
-    image = models.TextField("Фотография")
+    image = models.TextField()
+    service = models.ForeignKey("tattoo.Service", on_delete=models.SET_NULL, null = True)
+    master = models.ForeignKey("auth.User", on_delete=models.SET_NULL, null = True)
 
-class Studio(models.Model):
-    city = models.TextField("Город")
-    street = models.Model("Улица")
-    building = models.Model("Дом")
-"""
+    class Meta:
+            verbose_name = "Портфолио"
+            verbose_name_plural = "Портфолио"   
+
+class Appointment(models.Model):
+    class StatusChoices (models.TextChoices):
+          CONFIRMED = 'confirmed', 'Подтверждено'
+          CANCELLED = 'cancelled', 'Отменено'
+          COMPLETED = 'completed', 'Завершено'
+    
+    date = models.DateField("Дата")
+    time = models.TimeField("Время")
+    service = models.ForeignKey("tattoo.Service", on_delete=models.CASCADE, null = False)
+    master = models.ForeignKey("auth.User", on_delete=models.CASCADE, null = False, related_name="master_appointment")
+    client = models.ForeignKey("auth.User", on_delete=models.CASCADE, null = False, related_name="client_appointment")
+    comment = models.TextField("Комментарий")
+    status = models.TextField("Статус", choices = StatusChoices.choices, default = StatusChoices.CONFIRMED) #ImageField, URLField
+
+    class Meta:
+                verbose_name = "Запись"
+                verbose_name_plural = "Записи"  
+
+class Review(models.Model):
+     class RatingChoices(models.IntegerChoices):
+           ONE = 1, "Ужасно"
+           TWO = 2, "Плохо"
+           THREE = 3, "Норм"
+           FOUR = 4, "Хорошо"
+           FIVE = 5, "Отлично"
+
+     appointment = models.ForeignKey("tattoo.Appointment", on_delete=models.CASCADE, null = False)
+     rating = models.IntegerField("Оценка", choices = RatingChoices.choices, null = True)
+     comment = models.TextField("Комментарий")
+
+     class Meta:
+                 verbose_name = "Отзыв"
+                 verbose_name_plural = "Отзывы"  

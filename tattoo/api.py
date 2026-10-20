@@ -5,6 +5,6 @@ from tattoo.models import Student
 from tattoo.serializers import StudentSerializer
 from tattoo.serializers import GroupSerializer
 
-class StudentsViewset(mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
+class StudentsViewset(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
