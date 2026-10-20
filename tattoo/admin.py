@@ -6,6 +6,7 @@ from tattoo.models import Service
 from tattoo.models import Appointment
 from tattoo.models import Review
 from tattoo.models import Portfolio
+from tattoo.models import Profile
 
 # Register your models here.
 @admin.register(Student)
@@ -31,3 +32,9 @@ class ReviewAdmin(admin.ModelAdmin):
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ['id', 'service']
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'role']
+    def has_add_permission(self, request):
+        return False

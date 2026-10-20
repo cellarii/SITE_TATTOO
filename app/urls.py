@@ -21,6 +21,9 @@ from tattoo import views
 from rest_framework.routers import DefaultRouter
 from tattoo.api import StudentsViewset
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 router = DefaultRouter()
 router.register('tattoostudio', StudentsViewset, basename = "tattoostudio")
 
@@ -28,4 +31,4 @@ urlpatterns = [
     path('', views.ShowStudentView.as_view()),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
