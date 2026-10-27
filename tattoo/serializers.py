@@ -1,15 +1,23 @@
 from rest_framework import serializers
 
-from tattoo.models import Student
-from tattoo.models import Group
+from tattoo.models import Service, Portfolio, Review, Appointment
 
-class GroupSerializer(serializers.ModelSerializer):
+class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
-        fields = "__all__"
+        model = Service
+        fields = '__all__'
 
-class StudentSerializer(serializers.ModelSerializer):
-    group = GroupSerializer(read_only = True)
+class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Student
-        fields = ['id', 'name', 'group']
+        model = Portfolio
+        fields = '__all__'
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'

@@ -4,24 +4,6 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Student(models.Model):
-    name = models.TextField("ФИО")
-    group = models.ForeignKey("Group", on_delete = models.CASCADE, null = True)
-
-    class Meta:
-        verbose_name = "Студент"
-        verbose_name_plural = "Студенты"
-
-class Group(models.Model):
-    name = models.TextField("Название")
-
-    class Meta:
-        verbose_name = "Группа"
-        verbose_name_plural = "Группы"
-
-    def __str__(self) -> str:
-        return self.name
-
 class Profile(models.Model):
     class Role(models.TextChoices):
         undefined = 'undefined', 'Неопределенный'
@@ -82,7 +64,7 @@ class Appointment(models.Model):
                 verbose_name_plural = "Записи"
 
     def __str__(self):
-         return f'{self.date} {self.time}'
+         return f'{self.date} {self.time} {self.service}'
 
 class Review(models.Model):
      class Rating(models.IntegerChoices):
