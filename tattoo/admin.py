@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from tattoo.models import Student
-from tattoo.models import Group
 from tattoo.models import Service
 from tattoo.models import Appointment
 from tattoo.models import Review

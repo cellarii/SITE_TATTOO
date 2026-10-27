@@ -9,18 +9,46 @@ from tattoo.models import Portfolio
 
 from tattoo.serializers import ServiceSerializer, PortfolioSerializer, ReviewSerializer, AppointmentSerializer
 
-class ServiceViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, GenericViewSet):
+class ServiceViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+    ):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
-class PortfolioViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, GenericViewSet):
+class PortfolioViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+    ):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
 
-class ReviewViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, GenericViewSet):
+class ReviewViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+    ):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
-class AppointmentViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, GenericViewSet):
+class AppointmentViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+    ):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
