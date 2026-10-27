@@ -9,32 +9,27 @@ from tattoo.models import Portfolio
 from tattoo.models import Profile
 
 # Register your models here.
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'group']
-
-@admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
-
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
+    list_display = ['id', 'name', 'price', 'duration']
+    list_display_links = ('name', )
 
 @admin.register(Portfolio)
 class PortfolioAdmin(admin.ModelAdmin):
-    list_display = ['id']
+    list_display = ['id', 'service', 'master']
+    list_display_links = ('service', )
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'comment']
+    list_display = ['id', 'appointment', 'rating', 'comment']
+    list_display_links = ('comment', )
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'service']
+    list_display = ['id', 'date','time', 'service', 'master', 'client', 'comment']
+    list_display_links = ('service', )
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'role']
-    def has_add_permission(self, request):
-        return False
+    list_display = ['id', 'user', 'role']
+    list_display_links = ('user', )

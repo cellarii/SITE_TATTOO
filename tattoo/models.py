@@ -52,6 +52,9 @@ class Service(models.Model):
         verbose_name = "Услуга"
         verbose_name_plural = "Услуги"
 
+    def __str__(self):
+         return self.name
+
 class Portfolio(models.Model):
     image = models.ImageField("Картинка", null = True, upload_to="portfolio")
     service = models.ForeignKey("tattoo.Service", on_delete=models.SET_NULL, null = True, blank = True)
@@ -73,11 +76,13 @@ class Appointment(models.Model):
     master = models.ForeignKey("auth.User", on_delete=models.CASCADE, null = False, related_name="master_appointment", blank = True)
     client = models.ForeignKey("auth.User", on_delete=models.CASCADE, null = False, related_name="client_appointment", blank = True)
     comment = models.TextField("Комментарий", blank = True)
-    status = models.TextField("Статус", choices = Status, default = Status.confirmed)
 
     class Meta:
                 verbose_name = "Запись"
-                verbose_name_plural = "Записи"  
+                verbose_name_plural = "Записи"
+
+    def __str__(self):
+         return f'{self.date} {self.time}'
 
 class Review(models.Model):
      class Rating(models.IntegerChoices):
