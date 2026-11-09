@@ -1,3 +1,7 @@
+from io import BytesIO
+from PIL import Image
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from rest_framework.test import APIClient
 from tattoo.models import Service, Appointment, Portfolio, Review
@@ -72,6 +76,10 @@ class ServiceViewsetTestCase(TestCase):
 
         service.refresh_from_db()
         assert data['name'] == service.name
+
+class AppointmentViewsetTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
 
     def test_get_appointment(self):
         service = baker.make("tattoo.Service")
@@ -158,6 +166,10 @@ class ServiceViewsetTestCase(TestCase):
         appointment.refresh_from_db()
         assert data['date'] == str(appointment.date)
 
+class ReviewViewsetTestCase(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
     def test_get_review(self):
         service = baker.make("tattoo.Service")
         master = baker.make("auth.User")
@@ -241,6 +253,10 @@ class ServiceViewsetTestCase(TestCase):
         review.refresh_from_db()
         assert data['comment'] == review.comment
 
+class PortfolioViewsetTestCase(TestCase):
+    def setUp(self):
+            self.client = APIClient()
+
     def test_get_portfolio(self):
         service = baker.make("tattoo.Service")
         master = baker.make("auth.User")
@@ -259,18 +275,66 @@ class ServiceViewsetTestCase(TestCase):
         service = baker.make("tattoo.Service")
         master = baker.make("auth.User")
 
+        buf = BytesIO()
+        Image.new('RGB', (1, 1)).save(buf, format='PNG')
+        image_bytes = buf.getvalue()
+        image = SimpleUploadedFile('test.png', image_bytes, content_type='image/png')
+
         r = self.client.post('/api/portfolios/', {
             "service": service.id,
             "master": master.id,
-            "image": "sknd"
-        })
+            "image": image,
+        }, format='multipart')
+
+        assert r.status_code == 201
 
         new_portfolio_id = r.json()['id']
 
         portfolios = Portfolio.objects.all()
         assert len(portfolios) == 1
 
-        new_portfolio = Portfolio.objects.filter(id = new_portfolio_id).first()
+        new_portfolio = Portfolio.objects.filter(id=new_portfolio_id).first()
         assert new_portfolio.service == service
         assert new_portfolio.master == master
-        assert new_portfolio.image == "sknd"
+        assert new_portfolio.image.read() == image_bytes
+
+    def test_delete_portfolio(self):
+        service = baker.make("tattoo.Service")
+        master = baker.make("auth.User")
+        portfolios = baker.make("tattoo.Portfolio", service = service, master = master, _create_files=True, _quantity = 10)
+
+        r = self.client.get('/api/portfolios/')
+        data = r.json()
+        assert len(data) == 10
+
+        portfolio_to_delete = portfolios[3].id
+        self.client.delete(f'/api/portfolios/{portfolio_to_delete}/')
+
+        r = self.client.get('/api/portfolios/')
+        data = r.json()
+        assert len(data) == 9
+
+        assert portfolio_to_delete not in [i['id'] for i in data]
+
+    def test_update_portfolio(self):
+        service = baker.make("tattoo.Service")
+        new_service = baker.make("tattoo.Service")
+        master = baker.make("auth.User")
+        portfolios = baker.make("tattoo.Portfolio", service=service, master=master, _create_files=True, _quantity=10)
+        portfolio: Portfolio = portfolios[2]
+
+        r = self.client.get(f'/api/portfolios/{portfolio.id}/')
+        data = r.json()
+        assert data['service'] == service.id
+
+        r = self.client.patch(f'/api/portfolios/{portfolio.id}/', {
+            "service": new_service.id
+        })
+        assert r.status_code == 200
+
+        r = self.client.get(f'/api/portfolios/{portfolio.id}/')
+        data = r.json()
+        assert data['service'] == new_service.id
+
+        portfolio.refresh_from_db()
+        assert data['service'] == portfolio.service.id
