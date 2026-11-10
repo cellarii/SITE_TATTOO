@@ -35,7 +35,16 @@ async function onLogoutButton() {
                         <a href="/admin" class="nav-link">Admin</a>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/login" class="nav-link">Авторизован: {{ isAuthenticated }}</router-link>
+                        <router-link to="/service" class="nav-link">Service</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/appointment" class="nav-link">Appointment</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/review" class="nav-link">Review</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/portfolio" class="nav-link">Portfolio</router-link>
                     </li>
                 </ul>
                 <div role="search">

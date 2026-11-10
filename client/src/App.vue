@@ -1,5 +1,10 @@
 <script setup>
 import NavBar from './components/NavBar.vue';
+
+async function onLoadClick() {
+  
+}
+
 </script>
 
 <template>
