@@ -19,7 +19,7 @@ from django.urls import path, include
 
 from tattoo import views
 from rest_framework.routers import DefaultRouter
-from tattoo.api import ServiceViewSet, ReviewViewSet, PortfolioViewSet, AppointmentViewSet
+from tattoo.api import ProfileViewSet, ServiceViewSet, ReviewViewSet, PortfolioViewSet, AppointmentViewSet
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,8 +29,10 @@ router.register('services', ServiceViewSet, 'services')
 router.register('reviews', ReviewViewSet, 'reviews')
 router.register('portfolios', PortfolioViewSet, 'portfolios')
 router.register('appointments', AppointmentViewSet, 'appointments')
+router.register('profile', ProfileViewSet, 'profile')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
+  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
