@@ -9,7 +9,8 @@ from django.contrib.auth import logout as django_logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth import authenticate
 
-from tattoo.serializers import AppointmentReadSerializer, ServiceSerializer, PortfolioSerializer, ReviewSerializer, AppointmentSerializer, ReviewReadSerializer
+from tattoo.serializers import AppointmentReadSerializer, ServiceSerializer, PortfolioSerializer
+from tattoo.serializers import ReviewSerializer, AppointmentSerializer, ReviewReadSerializer, UserSerializer
 
 class ServiceViewSet(
     mixins.ListModelMixin,
@@ -61,8 +62,36 @@ class AppointmentViewSet(
             return AppointmentReadSerializer
         return AppointmentSerializer
 
-class ProfileViewSet(GenericViewSet):
+class UserViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    GenericViewSet
+    ):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+
+class ProfileViewSet(mixins.ListModelMixin, GenericViewSet):
     queryset = Profile.objects.all()
+
+    @action(detail=False, url_path='masters', methods=['GET'])
+    def get_masters(self, *args, **kwargs):
+        masters = User.objects.filter(profile__role=Profile.Role.master)
+
+        serializer = UserSerializer(masters, many=True)
+        return Response(serializer.data)
+
+
+    @action(detail=False, url_path='clients', methods=['GET'])
+    def get_clients(self, *args, **kwargs):
+        clients = User.objects.filter(profile__role=Profile.Role.client)
+
+        serializer = UserSerializer(clients, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, url_path='me', methods=['GET'])
     def get_me(self, request, *args, **kwargs):

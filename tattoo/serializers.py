@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from tattoo.models import Service, Portfolio, Review, Appointment
+from django.contrib.auth.models import User
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,11 +19,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    time = serializers.TimeField(format='%H:%M')
     class Meta:
         model = Appointment
         fields = '__all__'
-
-
 
 class ReviewReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,3 +35,8 @@ class AppointmentReadSerializer(serializers.ModelSerializer):
         model = Appointment
         fields = '__all__'
         depth = 2
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
