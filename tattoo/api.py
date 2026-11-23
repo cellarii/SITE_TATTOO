@@ -10,7 +10,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import authenticate
 
 from tattoo.serializers import AppointmentReadSerializer, ServiceSerializer, PortfolioSerializer
-from tattoo.serializers import ReviewSerializer, AppointmentSerializer, ReviewReadSerializer, UserSerializer
+from tattoo.serializers import ReviewSerializer, AppointmentSerializer, ReviewReadSerializer, UserSerializer, PortfolioReadSerializer
 
 class ServiceViewSet(
     mixins.ListModelMixin,
@@ -32,7 +32,10 @@ class PortfolioViewSet(
     GenericViewSet
     ):
     queryset = Portfolio.objects.all()
-    serializer_class = PortfolioSerializer
+    def get_serializer_class(self):
+            if self.action in ('list'):
+                return PortfolioReadSerializer
+            return PortfolioSerializer
 
 class ReviewViewSet(
     mixins.ListModelMixin,

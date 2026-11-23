@@ -71,7 +71,7 @@ onBeforeMount(async () => {
     </form>
 
     <div>
-      <div v-for="item in services" class="student-item row align-items-center">
+      <div v-for="item in services" class="item row align-items-center">
         <div class="col">
           {{ item.name }} ♡♡♡ Стоимость: {{ item.price }}, Длительность: {{ item.duration }}
         </div>
@@ -129,7 +129,7 @@ onBeforeMount(async () => {
 </template>
 
 <style lange="scsss" scoped>
-.student-item {
+.item {
   padding: 0.5rem;
   margin: 0.5rem 0;
   border: 1px solid silver;

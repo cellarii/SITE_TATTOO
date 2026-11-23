@@ -13,6 +13,12 @@ class PortfolioSerializer(serializers.ModelSerializer):
         model = Portfolio
         fields = '__all__'
 
+class PortfolioReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = '__all__'
+        depth = 2
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
