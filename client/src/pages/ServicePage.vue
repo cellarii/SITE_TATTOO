@@ -15,6 +15,12 @@ const serviceAddImageUrl = ref()
 const serviceEditPictureRef = ref()
 const serviceEditImageUrl = ref()
 
+const pictureToView = ref({})
+
+async function onPictureClick(picture) {
+  pictureToView.value = picture
+}
+
 async function fetchServices() {
   const r = await axios.get('/api/services/');
   services.value = r.data;
@@ -116,7 +122,8 @@ onBeforeMount(async () => {
           {{ item.name }} ♡♡♡ Стоимость: {{ item.price }}, Длительность: {{ item.duration }}
         </div>
         <div style="text-align: center;">
-          <img :src="item.image" alt="" style="max-height: 200px;" />
+          <img :src="item.image" alt="" style="max-height: 200px;" data-bs-target="#clickPicture" data-bs-toggle="modal"
+            @click="onPictureClick(item)" />
         </div>
         <div class="col-auto">
           <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editService"
@@ -133,7 +140,7 @@ onBeforeMount(async () => {
     </div>
   </div>
 
-  <div class="modal fade" id="editService" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editService" aria-hidden="true">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -172,6 +179,16 @@ onBeforeMount(async () => {
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
             @click="onServiceUpdate()">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="clickPicture" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: fit-content; width: auto;">
+      <div class="modal-content" style="width: auto;">
+        <div class="modal-body">
+          <img :src="pictureToView.image" alt="" style="display: block; max-width: 500px; max-height: 500px;">
         </div>
       </div>
     </div>

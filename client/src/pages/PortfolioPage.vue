@@ -14,6 +14,12 @@ const portfolioAddImageUrl = ref();
 const portfolioEditPictureRef = ref();
 const portfolioEditImageUrl = ref();
 
+const pictureToView = ref({})
+
+async function onPictureClick(picture) {
+    pictureToView.value = picture
+}
+
 async function fetchPortfolios() {
     const r = await axios.get('/api/portfolios/');
     console.log(r.data)
@@ -70,7 +76,7 @@ async function onPortfolioUpdate(params) {
     formData.set('service', portfolioToEdit.value.service);
     formData.set('master', portfolioToEdit.value.master);
 
-    if (portfolioEditPictureRef.value.files[0]){
+    if (portfolioEditPictureRef.value.files[0]) {
         formData.set('image', portfolioEditPictureRef.value.files[0]);
     }
 
@@ -125,7 +131,8 @@ onBeforeMount(async () => {
                     Услуга: {{ item.service.name }}<br>
                     Мастер: {{ item.master.username }}<br>
                     <div style="text-align: center;">
-                        <img :src="item.image" alt="" width="300" height="200" />
+                        <img :src="item.image" alt="" width="300" height="200" @click="onPictureClick(item)"
+                            data-bs-target="#clickPicture" data-bs-toggle="modal" />
                     </div>
                 </div>
                 <div class="col-auto">
@@ -181,6 +188,16 @@ onBeforeMount(async () => {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
                         @click="onPortfolioUpdate()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="clickPicture" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: fit-content; width: auto;">
+            <div class="modal-content" style="width: auto;">
+                <div class="modal-body">
+                    <img :src="pictureToView.image" alt="" style="display: block; max-width: 500px; max-height: 500px;">
                 </div>
             </div>
         </div>
