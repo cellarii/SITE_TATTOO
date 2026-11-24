@@ -8,6 +8,10 @@ const services = ref({})
 const masters = ref({})
 const portfolioToAdd = ref({})
 const portfolioToEdit = ref({})
+const portfolioPictureRef = ref();
+const portfolioAddImageUrl = ref();
+const portfolioEditPictureRef = ref();
+const portfolioEditImageUrl = ref();
 
 async function fetchPortfolios() {
     const r = await axios.get('/api/portfolios/');
@@ -25,9 +29,24 @@ async function fetchMasters() {
     masters.value = r.data
 }
 
+async function portfolioAddPictureChange() {
+    if (portfolioAddImageUrl.value) URL.revokeObjectURL(portfolioAddImageUrl.value);
+    portfolioAddImageUrl.value = URL.createObjectURL(portfolioPictureRef.value.files[0]);
+}
+
+function portfolioEditPictureChange() {
+    if (portfolioEditImageUrl.value) URL.revokeObjectURL(portfolioEditImageUrl.value);
+    portfolioEditImageUrl.value = URL.createObjectURL(portfolioEditPictureRef.value.files[0]);
+}
+
 async function onPortfolioAdd() {
-    await axios.post('/api/portfolios/', portfolioToAdd.value);
-    fetchPortfolios()
+    const formData = new FormData();
+    formData.append('image', portfolioPictureRef.value.files[0]);
+    formData.set('service', portfolioToAdd.value.service)
+    formData.set('master', portfolioToAdd.value.master)
+
+    await axios.post('/api/portfolios/', formData);
+    await fetchPortfolios()
 }
 
 async function onPortfolioDelete(portfolio) {
@@ -37,15 +56,25 @@ async function onPortfolioDelete(portfolio) {
 
 async function onPortfolioEdit(portfolio) {
     portfolioToEdit.value = { ...portfolio, service: portfolio.service.id, master: portfolio.master.id };
+    if (portfolioEditImageUrl.value) URL.revokeObjectURL(portfolioEditImageUrl.value);
+    portfolioEditImageUrl.value = portfolio.image;
+    if (portfolioEditPictureRef.value) {
+        portfolioEditPictureRef.value.value = '';
+    }
 }
 
 async function onPortfolioUpdate(params) {
-    const { service, master } = portfolioToEdit.value;
-    await axios.put(`/api/portfolios/${portfolioToEdit.value.id}/`, {
-        service: service,
-        master: master
-    });
-    fetchPortfolios()
+    const formData = new FormData();
+
+    formData.set('service', portfolioToEdit.value.service);
+    formData.set('master', portfolioToEdit.value.master);
+
+    if (portfolioEditPictureRef.value.files[0]){
+        formData.set('image', portfolioEditPictureRef.value.files[0]);
+    }
+
+    await axios.patch(`/api/portfolios/${portfolioToEdit.value.id}/`, formData);
+    await fetchPortfolios();
 }
 
 onBeforeMount(async () => {
@@ -75,6 +104,13 @@ onBeforeMount(async () => {
                         </select>
                         <label for="floatingInput">Мастер</label>
                     </div>
+                </div>
+                <div class="col-auto">
+                    <input type="file" class="form-control" ref="portfolioPictureRef"
+                        @change="portfolioAddPictureChange">
+                </div>
+                <div class="col-auto">
+                    <img :src="portfolioAddImageUrl" style="max-height: 60px;" alt="">
                 </div>
                 <div class="col-auto">
                     <button class="btn btn-primary">Добавить</button>
@@ -132,7 +168,11 @@ onBeforeMount(async () => {
                             </div>
                         </div>
                         <div class="col-auto">
-                            <button class="btn btn-primary">Добавить</button>
+                            <input type="file" class="form-control" ref="portfolioEditPictureRef"
+                                @change="portfolioEditPictureChange">
+                        </div>
+                        <div class="col-auto">
+                            <img :src="portfolioEditImageUrl" style="max-height: 60px;" alt="">
                         </div>
                     </div>
                 </div>
