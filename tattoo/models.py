@@ -29,6 +29,7 @@ class Service(models.Model):
     name = models.TextField("Название")
     price = models.IntegerField("Стоимость")
     duration = models.PositiveBigIntegerField("Длительность (мин)")
+    image = models.ImageField("Картинка", null = True, upload_to="service")
 
     class Meta:
         verbose_name = "Услуга"

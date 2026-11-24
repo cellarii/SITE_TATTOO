@@ -9,13 +9,35 @@ const loading = ref(false)
 const serviceToAdd = ref({})
 const serviceToEdit = ref({})
 
+const serviceAddPictureRef = ref()
+const serviceAddImageUrl = ref()
+
+const serviceEditPictureRef = ref()
+const serviceEditImageUrl = ref()
+
 async function fetchServices() {
   const r = await axios.get('/api/services/');
   services.value = r.data;
 }
 
+async function serviceAddPictureChange() {
+  if (serviceAddImageUrl.value) URL.revokeObjectURL(serviceAddImageUrl.value);
+  serviceAddImageUrl.value = URL.createObjectURL(serviceAddPictureRef.value.files[0]);
+}
+
+async function serviceEditPictureChange() {
+  if (serviceEditImageUrl.value) URL.revokeObjectURL(serviceEditImageUrl.value);
+  serviceEditImageUrl.value = URL.createObjectURL(serviceEditPictureRef.value.files[0]);
+}
+
 async function onServiceAdd() {
-  await axios.post('/api/services/', serviceToAdd.value)
+  const formData = new FormData();
+  formData.append('image', serviceAddPictureRef.value.files[0]);
+  formData.set('name', serviceToAdd.value.name)
+  formData.set('price', serviceToAdd.value.price)
+  formData.set('duration', serviceToAdd.value.duration)
+
+  await axios.post('/api/services/', formData)
   fetchServices()
 }
 
@@ -25,15 +47,27 @@ async function onServiceDelete(item) {
 }
 
 async function onServiceEdit(service) {
-    serviceToEdit.value = { ...service };
+  serviceToEdit.value = { ...service };
+  if (serviceEditImageUrl.value) URL.revokeObjectURL(serviceEditImageUrl.value);
+  serviceEditImageUrl.value = service.image;
+  if (serviceEditPictureRef.value) {
+    serviceEditPictureRef.value.value = '';
+  }
 }
 
 async function onServiceUpdate(params) {
-    const service = serviceToEdit.value;
-    await axios.put(`/api/services/${serviceToEdit.value.id}/`, {
-        ...service
-    });
-    fetchServices()
+  const formData = new FormData();
+
+  formData.set('name', serviceToEdit.value.name)
+  formData.set('price', serviceToEdit.value.price)
+  formData.set('duration', serviceToEdit.value.duration)
+
+  if (serviceEditPictureRef.value.files[0]) {
+    formData.set('image', serviceEditPictureRef.value.files[0]);
+  }
+
+  await axios.put(`/api/services/${serviceToEdit.value.id}/`, formData);
+  fetchServices()
 }
 
 onBeforeMount(async () => {
@@ -65,6 +99,12 @@ onBeforeMount(async () => {
           </div>
         </div>
         <div class="col-auto">
+          <input type="file" class="form-control" ref="serviceAddPictureRef" @change="serviceAddPictureChange">
+        </div>
+        <div class="col-auto">
+          <img :src="serviceAddImageUrl" style="max-height: 60px;" alt="">
+        </div>
+        <div class="col-auto">
           <button class="btn btn-primary">Добавить</button>
         </div>
       </div>
@@ -75,8 +115,12 @@ onBeforeMount(async () => {
         <div class="col">
           {{ item.name }} ♡♡♡ Стоимость: {{ item.price }}, Длительность: {{ item.duration }}
         </div>
+        <div style="text-align: center;">
+          <img :src="item.image" alt="" style="max-height: 200px;" />
+        </div>
         <div class="col-auto">
-          <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editService" @click="onServiceEdit(item)">
+          <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editService"
+            @click="onServiceEdit(item)">
             <i class="bi bi-pen"></i>
           </button>
         </div>
@@ -115,6 +159,12 @@ onBeforeMount(async () => {
                 <input type="number" class="form-control" v-model="serviceToEdit.duration">
                 <label for="floatingInput">Длительность</label>
               </div>
+            </div>
+            <div class="col-auto">
+              <input type="file" class="form-control" ref="serviceEditPictureRef" @change="serviceEditPictureChange">
+            </div>
+            <div class="col-auto">
+              <img :src="serviceEditImageUrl" style="max-height: 60px;" alt="">
             </div>
           </div>
         </div>
